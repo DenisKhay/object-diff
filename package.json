@@ -1,0 +1,21 @@
+{
+  "name": "object-diff",
+  "version": "1.0.0",
+  "description": "Generates difference between two plain objects represened as tree",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "object",
+    "difference",
+    "diff",
+    "javascript",
+    "object"
+  ],
+  "author": "Denis Khay",
+  "license": "MIT",
+  "dependencies": {
+    "lodash": "^4.17.10"
+  }
+}
