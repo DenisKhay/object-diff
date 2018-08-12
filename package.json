@@ -4,7 +4,7 @@
   "description": "Generates difference between two plain objects represened as tree",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "jasmine"
   },
   "keywords": [
     "object",
@@ -17,5 +17,8 @@
   "license": "MIT",
   "dependencies": {
     "lodash": "^4.17.10"
+  },
+  "devDependencies": {
+    "jasmine": "^3.2.0"
   }
 }
