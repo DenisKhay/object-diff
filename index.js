@@ -26,10 +26,11 @@ module.exports = function (base, target) {
     let diffTree = {};
     while (true) {
 
-        for (let ln = keys.length; ln > idx; idx++) {
+        while (keys.length > idx) {
             const prop = keys[idx];
 
             if(_.isEqual(base[prop], target[prop])){
+                idx++;
                 continue;
             }
 
@@ -37,12 +38,12 @@ module.exports = function (base, target) {
                 history.push({base, target, keys, idx, diffTree});
                 base = base[prop];
                 target = target[prop];
-                idx = -1;
+                idx = 0;
                 keys = Object.keys(base);
-                ln = keys.length;
                 diffTree = {};
             } else {
                 diffTree[prop] = [base[prop], target[prop]];
+                idx++;
             }
         }
 
