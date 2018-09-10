@@ -1,37 +1,63 @@
 const _ = require('lodash');
 
-module.exports = function (object1, object2) {
+module.exports = function (base, target) {
 
-    const d = diff({root: object1}, {root: object2});
-    const d2 = diff({root: object2}, {root: object1}, true);
-    Object.assign(d, d2);
+    // history = []
 
-    return d.root || {};
+    // base
+    // target
+    // keys = base.keys
+    // currentIdx = 0
+    // diffTree = {}
 
-    function diff(ob0, ob1, rev) {
-        const branch = {};
-        if (_.isEqual(ob0, ob1)) {
-            return branch;
-        }
-        Object.keys(ob0).forEach((key) => {
+    // step in condition:
+    // store all above as history object
+    // set base target from two new and to go up
 
-            const part0 = ob0[key];
-            const part1 = ob1[key];
+    // step out condition:
+    // get last history object and set diffTree[keys[currentIdx]] = diffTree
+    // set main refs from history
+    // remove last history object and continue
 
-            if (_.isEqual(part0, part1)) {
-                return;
+
+    const history = [];
+    let idx = 0;
+    let keys = Object.keys(base);
+    let diffTree = {};
+    while (true) {
+
+        for (let ln = keys.length; ln > idx; idx++) {
+            const prop = keys[idx];
+
+            if(_.isEqual(base[prop], target[prop])){
+                continue;
             }
 
-            if (_.isObject(part0) && _.isObject(part1)) {
-                branch[key] = diff(part0, part1);
-                return;
-            }
-            if (!rev) {
-                branch[key] = [part0, part1];
+            if(_.isObject(base[prop]) && _.isObject(target[prop])) {
+                history.push({base, target, keys, idx, diffTree});
+                base = base[prop];
+                target = target[prop];
+                idx = -1;
+                keys = Object.keys(base);
+                ln = keys.length;
+                diffTree = {};
             } else {
-                branch[key] = [part1, part0];
+                diffTree[prop] = [base[prop], target[prop]];
             }
-        });
-        return branch;
+        }
+
+        if(history.length) {
+            const hisOb = history.pop();
+            base = hisOb['base'];
+            target = hisOb['target'];
+            keys = hisOb['keys'];
+            const oldDiffTree = hisOb['diffTree'];
+            oldDiffTree[keys[hisOb['idx']]] = diffTree;
+            diffTree = oldDiffTree;
+            idx = hisOb['idx'] + 1;
+        } else {
+            break;
+        }
     }
+    return diffTree;
 };
