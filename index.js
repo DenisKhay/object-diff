@@ -20,7 +20,7 @@ module.exports = function (base, target) {
     // remove last history object and continue
 
 
-    const history = [];
+    const parents = [];
     let idx = 0;
     let keys = Object.keys(base);
     let diffTree = {};
@@ -35,7 +35,7 @@ module.exports = function (base, target) {
             }
 
             if(_.isObject(base[prop]) && _.isObject(target[prop])) {
-                history.push({base, target, keys, idx, diffTree});
+                parents.push({base, target, keys, idx, diffTree});
                 base = base[prop];
                 target = target[prop];
                 idx = 0;
@@ -47,15 +47,15 @@ module.exports = function (base, target) {
             }
         }
 
-        if(history.length) {
-            const hisOb = history.pop();
-            base = hisOb['base'];
-            target = hisOb['target'];
-            keys = hisOb['keys'];
-            const oldDiffTree = hisOb['diffTree'];
-            oldDiffTree[keys[hisOb['idx']]] = diffTree;
+        if(parents.length) {
+            const parentIter = parents.pop();
+            base = parentIter['base'];
+            target = parentIter['target'];
+            keys = parentIter['keys'];
+            const oldDiffTree = parentIter['diffTree'];
+            oldDiffTree[keys[parentIter['idx']]] = diffTree;
             diffTree = oldDiffTree;
-            idx = hisOb['idx'] + 1;
+            idx = parentIter['idx'] + 1;
         } else {
             break;
         }
