@@ -29,12 +29,12 @@ module.exports = function (base, target) {
         while (keys.length > idx) {
             const prop = keys[idx];
 
-            if(_.isEqual(base[prop], target[prop])){
+            if (_.isEqual(base[prop], target[prop])) {
                 idx++;
                 continue;
             }
 
-            if(_.isObject(base[prop]) && _.isObject(target[prop])) {
+            if (_.isObject(base[prop]) && _.isObject(target[prop]) && !_.isEmpty(base[prop]) && !_.isEmpty(target[prop])) {
                 parents.push({base, target, keys, idx, diffTree});
                 base = base[prop];
                 target = target[prop];
@@ -47,7 +47,7 @@ module.exports = function (base, target) {
             }
         }
 
-        if(parents.length) {
+        if (parents.length) {
             const parentIter = parents.pop();
             base = parentIter['base'];
             target = parentIter['target'];
