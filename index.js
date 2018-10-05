@@ -1,4 +1,4 @@
-const _ = require('lodash');
+const lo = require('lodash');
 
 module.exports = function (base, target) {
 
@@ -20,45 +20,56 @@ module.exports = function (base, target) {
     // remove last history object and continue
 
 
-    const parents = [];
-    let idx = 0;
-    let keys = Object.keys(base);
-    let diffTree = {};
+    const steps = [];
+
+    let step = {
+        index: 0,
+        diffTree: {},
+        baseObject: base,
+        targetObject: target
+    };
+    step.keys = Object.keys(step.baseObject);
+
     while (true) {
 
-        while (keys.length > idx) {
-            const prop = keys[idx];
+        while (step.keys.length > step.index) {
+            const key = step.keys[step.index];
 
-            if (_.isEqual(base[prop], target[prop])) {
-                idx++;
+            if (lo.isEqual(step.baseObject[key], step.targetObject[key]))
+            {
+                step.index++;
                 continue;
             }
 
-            if (_.isObject(base[prop]) && _.isObject(target[prop]) && !_.isEmpty(base[prop]) && !_.isEmpty(target[prop])) {
-                parents.push({base, target, keys, idx, diffTree});
-                base = base[prop];
-                target = target[prop];
-                idx = 0;
-                keys = Object.keys(base);
-                diffTree = {};
+            // todo: change to isPlainObject
+            // todo: add code linter
+            if (lo.isObject(step.baseObject[key]) &&
+                lo.isObject(step.targetObject[key]) &&
+                !lo.isEmpty(step.baseObject[key]) &&
+                !lo.isEmpty(step.baseObject[key]))
+            {
+                steps.push(step);
+                step = {
+                    index: 0,
+                    diffTree: {},
+                    baseObject: step.baseObject[key],
+                    targetObject: step.targetObject[key]
+                };
+                step.keys = Object.keys(step.baseObject);
             } else {
-                diffTree[prop] = [base[prop], target[prop]];
-                idx++;
+                step.diffTree[key] = [step.baseObject[key], step.targetObject[key]];
+                step.index++;
             }
         }
 
-        if (parents.length) {
-            const parentIter = parents.pop();
-            base = parentIter['base'];
-            target = parentIter['target'];
-            keys = parentIter['keys'];
-            const oldDiffTree = parentIter['diffTree'];
-            oldDiffTree[keys[parentIter['idx']]] = diffTree;
-            diffTree = oldDiffTree;
-            idx = parentIter['idx'] + 1;
+        if (steps.length) {
+            const childDiffTree = step.diffTree;
+            step = steps.pop();
+            step.diffTree[step.keys[step.index]] = childDiffTree;
+            step.index++;
         } else {
             break;
         }
     }
-    return diffTree;
+    return step.diffTree;
 };
