@@ -41,10 +41,9 @@ module.exports = function (base, target) {
                 continue;
             }
 
-            // todo: change to isPlainObject
             // todo: add code linter
-            if (lo.isObject(step.baseObject[key]) &&
-                lo.isObject(step.targetObject[key]) &&
+            if ((lo.isPlainObject(step.baseObject[key]) || (step.baseObject[key] instanceof Array)) &&
+                (lo.isPlainObject(step.targetObject[key]) || (step.targetObject[key] instanceof Array)) &&
                 !lo.isEmpty(step.baseObject[key]) &&
                 !lo.isEmpty(step.baseObject[key]))
             {
@@ -65,7 +64,9 @@ module.exports = function (base, target) {
         if (steps.length) {
             const childDiffTree = step.diffTree;
             step = steps.pop();
-            step.diffTree[step.keys[step.index]] = childDiffTree;
+            if (!lo.isEmpty(childDiffTree)) {
+                step.diffTree[step.keys[step.index]] = childDiffTree;
+            }
             step.index++;
         } else {
             break;
