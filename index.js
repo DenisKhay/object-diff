@@ -1,7 +1,6 @@
 const lo = require('lodash');
 
-module.exports = function (base, target) {
-
+module.exports = function(base, target) {
   // history = []
 
   // base
@@ -19,14 +18,13 @@ module.exports = function (base, target) {
   // set main refs from history
   // remove last history object and continue
 
-
   const steps = [];
 
   let step = {
     index: 0,
     diffTree: {},
     baseObject: base,
-    targetObject: target
+    targetObject: target,
   };
   step.keys = Object.keys(step.baseObject);
 
@@ -39,16 +37,18 @@ module.exports = function (base, target) {
         continue;
       }
 
-      if ((lo.isPlainObject(step.baseObject[key]) || (step.baseObject[key] instanceof Array)) &&
-        (lo.isPlainObject(step.targetObject[key]) || (step.targetObject[key] instanceof Array)) &&
-        !lo.isEmpty(step.baseObject[key]) &&
-        !lo.isEmpty(step.baseObject[key])) {
+      if ((lo.isPlainObject(step.baseObject[key]) ||
+          (step.baseObject[key] instanceof Array)) &&
+          (lo.isPlainObject(step.targetObject[key]) ||
+              (step.targetObject[key] instanceof Array)) &&
+          !lo.isEmpty(step.baseObject[key]) &&
+          !lo.isEmpty(step.baseObject[key])) {
         steps.push(step);
         step = {
           index: 0,
           diffTree: {},
           baseObject: step.baseObject[key],
-          targetObject: step.targetObject[key]
+          targetObject: step.targetObject[key],
         };
         step.keys = Object.keys(step.baseObject);
       } else {

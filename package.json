@@ -4,7 +4,8 @@
   "description": "Generates difference between two plain objects represened as tree",
   "main": "index.js",
   "scripts": {
-    "test": "jasmine"
+    "lint": "eslint index.js",
+    "lint:fix": "eslint index.js --fix"
   },
   "keywords": [
     "object",
